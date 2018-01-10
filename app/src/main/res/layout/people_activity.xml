@@ -4,13 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-  <data>
-
-    <variable
-        name="mainViewModel"
-        type="com.example.jhordan.people_mvvm.viewmodel.PeopleViewModel"/>
-  </data>
-
   <android.support.design.widget.CoordinatorLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
@@ -39,18 +32,18 @@
 
 
       <ProgressBar
+          android:visibility="gone"
           android:id="@+id/progress_people"
           android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          app:visibility="@{mainViewModel.peopleProgress}"/>
+          android:layout_height="wrap_content"/>
 
       <TextView
           android:id="@+id/label_status"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:gravity="center"
-          android:text="@{mainViewModel.messageLabel}"
-          app:visibility="@{mainViewModel.peopleLabel}"/>
+          android:layout_gravity="center"
+          android:text="@string/default_loading_people"/>
 
       <android.support.v7.widget.RecyclerView
           android:id="@+id/list_people"
@@ -59,7 +52,6 @@
           android:clipToPadding="false"
           android:scrollbars="vertical"
           app:layout_behavior="@string/appbar_scrolling_view_behavior"
-          app:visibility="@{mainViewModel.peopleRecycler}"
           tools:listitem="@layout/item_people"/>
 
 
@@ -71,7 +63,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:onClick="@{mainViewModel::onClickFabLoad}"
+        android:onClick="onClickFabLoad"
         android:src="@drawable/ic_add_24dp"/>
 
   </android.support.design.widget.CoordinatorLayout>

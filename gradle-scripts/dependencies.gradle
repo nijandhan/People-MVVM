@@ -13,6 +13,10 @@ ext {
   junitVersion = '4.12'
   mockitoVersion = '2.8.47'
 
+  butterKnifeVersion = '8.8.1'
+
+  lifeCycleArchiTechVersion ='1.0.0'
+
   //Packages
   supportPackage = 'com.android.support'
   retrofitPackage = 'com.squareup.retrofit2'
@@ -21,6 +25,14 @@ ext {
 
   glidePackage = 'com.github.bumptech.glide'
   hdodenhofPackage = 'de.hdodenhof'
+
+  butterKnifePackage = 'com.jakewharton'
+  butterKnifeProcessorPkg = 'com.jakewharton:butterknife-compiler'
+
+  // ViewModel and LiveData
+  lifeCycleArchPkh = 'android.arch.lifecycle'
+  //compiler:1.0.0
+  //:extensions:1.0.0
 
 
   junitPackage = 'junit'
@@ -57,6 +69,16 @@ ext {
       junit      : buildDependency(junitPackage, 'junit', junitVersion),
       mockito    : buildDependency(mockitoPackage, 'mockito-core', mockitoVersion)
 
+  ]
+
+  architecturalComponents = [
+          extension : buildDependency(lifeCycleArchPkh,'extensions',lifeCycleArchiTechVersion),
+          compiler : buildDependency(lifeCycleArchPkh,'compiler',lifeCycleArchiTechVersion)
+  ]
+
+  butterKnifeDependencies = [
+          butterknife : buildDependency(butterKnifePackage,'butterknife',butterKnifeVersion),
+          butterknife_compiler : buildDependency(butterKnifePackage,'butterknife-compiler',butterKnifeVersion)
   ]
 }
 

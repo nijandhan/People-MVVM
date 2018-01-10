@@ -16,55 +16,74 @@
 
 package com.example.jhordan.people_mvvm.view;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import com.example.jhordan.people_mvvm.R;
 import com.example.jhordan.people_mvvm.data.PeopleFactory;
-import com.example.jhordan.people_mvvm.databinding.PeopleActivityBinding;
+import com.example.jhordan.people_mvvm.model.People;
 import com.example.jhordan.people_mvvm.viewmodel.PeopleViewModel;
-import java.util.Observable;
-import java.util.Observer;
 
-public class PeopleActivity extends AppCompatActivity implements Observer {
+import java.util.List;
 
-  private PeopleActivityBinding peopleActivityBinding;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class PeopleActivity extends AppCompatActivity {
+
   private PeopleViewModel peopleViewModel;
+  private PeopleAdapter mPeopleAdapter;
+
+  @BindView(R.id.toolbar)
+  Toolbar toolbar;
+  @BindView(R.id.list_people)
+  RecyclerView listPeople;
+  @BindView(R.id.progress_people)
+  ProgressBar progress_people;
+  @BindView(R.id.label_status)
+  TextView label_status;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
-    initDataBinding();
-    setSupportActionBar(peopleActivityBinding.toolbar);
-    setupListPeopleView(peopleActivityBinding.listPeople);
-    setupObserver(peopleViewModel);
+    setContentView(R.layout.people_activity);
+    ButterKnife.bind(this);
+    peopleViewModel = ViewModelProviders.of(this).get(PeopleViewModel.class);
+    peopleViewModel.getPeoplesList().observe(this, new Observer<List<People>>() {
+      @Override
+      public void onChanged(@Nullable List<People> people) {
+        mPeopleAdapter.setPeopleList(people);
+        progress_people.setVisibility(View.GONE);
+        listPeople.setVisibility(View.VISIBLE);
+        label_status.setText(getString(R.string.default_loading_people));
+      }
+    });
+    setSupportActionBar(toolbar);
+    setupListPeopleView();
   }
 
-  private void initDataBinding() {
-    peopleActivityBinding = DataBindingUtil.setContentView(this, R.layout.people_activity);
-    peopleViewModel = new PeopleViewModel(this);
-    peopleActivityBinding.setMainViewModel(peopleViewModel);
-  }
-
-  private void setupListPeopleView(RecyclerView listPeople) {
-    PeopleAdapter adapter = new PeopleAdapter();
-    listPeople.setAdapter(adapter);
+  private void setupListPeopleView() {
+    mPeopleAdapter = new PeopleAdapter();
+    listPeople.setAdapter(mPeopleAdapter);
     listPeople.setLayoutManager(new LinearLayoutManager(this));
-  }
-
-  public void setupObserver(Observable observable) {
-    observable.addObserver(this);
   }
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    peopleViewModel.reset();
+    //peopleViewModel.detachView();
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -84,11 +103,33 @@ public class PeopleActivity extends AppCompatActivity implements Observer {
     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PeopleFactory.PROJECT_URL)));
   }
 
-  @Override public void update(Observable observable, Object data) {
-    if (observable instanceof PeopleViewModel) {
-      PeopleAdapter peopleAdapter = (PeopleAdapter) peopleActivityBinding.listPeople.getAdapter();
-      PeopleViewModel peopleViewModel = (PeopleViewModel) observable;
-      peopleAdapter.setPeopleList(peopleViewModel.getPeopleList());
-    }
+/*  @Override
+  public void onPeopleListSuccess() {
+
   }
+
+  @Override
+  public void onPeopleListFailure(String errorMessage) {
+    progress_people.setVisibility(View.GONE);
+    listPeople.setVisibility(View.GONE);
+    label_status.setVisibility(View.VISIBLE);
+    label_status.setText(getString(R.string.error_loading_people));
+  }*/
+
+  public void onClickFabLoad(View view) {
+    initializeViews();
+    peopleViewModel.fetchPeopleList();
+  }
+
+  public void initializeViews() {
+    label_status.setVisibility(View.GONE);
+    listPeople.setVisibility(View.GONE);
+    progress_people.setVisibility(View.VISIBLE);
+  }
+
+/*  @Override
+  public Context getContext() {
+    return this;
+  }*/
+
 }

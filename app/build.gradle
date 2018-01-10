@@ -59,6 +59,12 @@ dependencies {
     implementation circleImageView
     implementation glide
 
+    implementation butterKnifeDependencies.butterknife
+    annotationProcessor butterKnifeDependencies.butterknife_compiler
+
+    implementation architecturalComponents.extension
+    annotationProcessor architecturalComponents.compiler
+
     testImplementation testingDependencies.junit
     testImplementation testingDependencies.mockito
 }
